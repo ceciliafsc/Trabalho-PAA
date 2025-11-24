@@ -1,4 +1,5 @@
 package algoritmos_parte1;
+
 import model.*;
 import java.util.*;
 
@@ -30,7 +31,7 @@ public class ForcaBruta {
         return melhorLista;
     }
 
-    // Gera todas as permutações (força bruta)
+    // Gera todas as permutações
     private void permutar(List<Peca> lista, int inicio) {
 
         if (inicio == lista.size()) { // fim da permutação

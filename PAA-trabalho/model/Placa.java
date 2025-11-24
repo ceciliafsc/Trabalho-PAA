@@ -11,6 +11,7 @@ public class Placa {
     public static final int MARGEM = 10;
     public static final int ALTURA = 300 - MARGEM;
     public static final int LARGURA = 300 - MARGEM;
+    public static final int AREA = ALTURA * LARGURA;
 
     private List<Peca> pecas;
     private int[][] placaGrid; // Representação da placa
@@ -43,6 +44,21 @@ public class Placa {
     public boolean cabePeca(Peca peca) {
         // tenta encontrar qualquer posição livre onde caiba
         return cabeEmAlgumLugar(peca);
+    }
+
+    public int getAltura() {
+        return ALTURA;
+    }
+
+    public int getLargura() {
+        return LARGURA;
+    }
+
+    public int getArea() {
+        return ALTURA * LARGURA;
+    }
+    public static double getCustoPlaca() {
+         return CUSTO_PLACA;
     }
 
     private boolean cabeEmAlgumLugar(Peca peca) {
@@ -111,6 +127,35 @@ public class Placa {
         }
         return false; // não coube
     }
+
+    public boolean removerPeca(Peca peca) {
+    if (peca == null) return false;
+
+    int id = peca.getId() == 0 ? 1 : peca.getId();
+
+    boolean encontrou = false;
+
+    // Apagar as células da placa que pertencem à peça
+    for (int i = 0; i < ALTURA; i++) {
+        for (int j = 0; j < LARGURA; j++) {
+            if (placaGrid[i][j] == id) {
+                placaGrid[i][j] = 0; // libera espaço
+                encontrou = true;
+            }
+        }
+    }
+
+    // Se não achou nenhum pixel com esse id, a peça nem estava na placa
+    if (!encontrou) {
+        return false;
+    }
+
+    // Remove a peça da lista
+    pecas.remove(peca);
+
+    return true;
+}
+
 
     public void novaPlaca() {
         this.pecas.clear();

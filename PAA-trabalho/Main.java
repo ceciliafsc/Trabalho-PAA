@@ -4,14 +4,14 @@ import java.io.File;
 
 public class Main {
     public static void main(String[] args) {
-        String arquivo = "PAA-trabalho/entrada.txt";
+        String arquivo = "entrada.txt";
         List<Peca> pecas = lerArquivo(arquivo);
 
         System.out.println("Peças lidas:");
         for (Peca p : pecas) {
             System.out.println(p);
         }
-        //froça bruta
+        /*//froça bruta
         algoritmos_parte1.ForcaBruta solver = new algoritmos_parte1.ForcaBruta(pecas);
         solver.executar();
 
@@ -24,7 +24,14 @@ public class Main {
         fbSolver.executar(solver.executar());
 
         algoritmos_parte2.BnB2 bnb = new algoritmos_parte2.BnB2(pecas);
-        bnb.executar(solver.executar());
+        bnb.executar(solver.executar());*/
+
+        //branch and bound
+        algoritmos_parte1.BranchAndBound bbSolver = new algoritmos_parte1.BranchAndBound(pecas);
+        bbSolver.executar();
+         algoritmos_parte1.ForcaBruta solver = new algoritmos_parte1.ForcaBruta(pecas);
+        solver.executar();
+
 
         // aqui é onde cria a interface grafica?
     }

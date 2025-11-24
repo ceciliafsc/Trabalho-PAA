@@ -17,6 +17,7 @@ public class Peca {
     public int getLargura() {return largura;}
     public int getId() {return id;}
     public int getPeso() {return peso;}
+    public int getArea() {return altura * largura;}
     
     @Override
     public String toString(){
