@@ -3,71 +3,76 @@ package algoritmos_parte2;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import model.Peca;
 
+/**
+ * Branch and Bound para o problema de distribuição de carga.
+ */
 public class BnB2 {
-     private int min = Integer.MAX_VALUE; // diferença mínima de peso
-    public List<Peca> melhorPorao1 = new ArrayList<>(); // melhor lista para porão 1
-    public List<Peca> melhorPorao2 = new ArrayList<>(); // melhor lista para porão 2
-    public List<Peca> poraoAtual1 = new ArrayList<>(); // melhor lista para porão 1
-    public List<Peca> poraoAtual2 = new ArrayList<>(); // melhor lista para porão 2
+    private int diferencaMinima = Integer.MAX_VALUE;
+    private List<Peca> melhorPorao1 = new ArrayList<>();
+    private List<Peca> melhorPorao2 = new ArrayList<>();
+    private List<Peca> poraoAtual1 = new ArrayList<>();
+    private List<Peca> poraoAtual2 = new ArrayList<>();
 
-     public BnB2(List<Peca> pecas) {
+    public void executar(List<Peca> pecas) {
+        List<Peca> listaOrdenada = new ArrayList<>(pecas);
+        listaOrdenada.sort((p1, p2) -> Integer.compare(p2.getPeso(), p1.getPeso()));
+        permutar(listaOrdenada, 0);
     }
 
-     public void executar(List<Peca> lista) {
-        System.out.println("\nExecutando algoritmo de Branch and Bound");
-
-        long inicio = System.nanoTime(); // INÍCIO DO TEMPO
-
-        permutar(new ArrayList<>(lista), 0);
-
-        long fim = System.nanoTime(); // FIM DO TEMPO
-
-        double tempoMs = (fim - inicio) / 1_000_000.0; // milissegundos
-        double tempoSeg = (fim - inicio) / 1_000_000_000.0; // segundos
-
-        System.out.println("Menor diferença de peso: " + min);
-        System.out.printf("Tempo total: %.3f ms (%.4f segundos)\n", tempoMs, tempoSeg);
-    }
-
-      private void permutar(List<Peca> lista, int inicio) {
-
-        if (inicio == lista.size()) { // fim da permutação
-            int diferenca = montarPorao(lista, 0);
-
-            if (diferenca < min) {// guarada melhor
-                min = diferenca;
-                melhorPorao1= new ArrayList<>(poraoAtual1);
-                melhorPorao2= new ArrayList<>(poraoAtual2);
+    private void permutar(List<Peca> lista, int inicio) {
+        if (inicio == lista.size()) {
+            int diferenca = calcularDistribuicaoGulosa(lista);
+            if (diferenca < diferencaMinima) {
+                diferencaMinima = diferenca;
+                melhorPorao1 = new ArrayList<>(poraoAtual1);
+                melhorPorao2 = new ArrayList<>(poraoAtual2);
             }
             return;
         }
 
-        for (int i = inicio; i < lista.size(); i++) { // troca todas as posições
+        if (diferencaMinima == 0)
+            return; // Solução ótima encontrada
+
+        for (int i = inicio; i < lista.size(); i++) {
             Collections.swap(lista, inicio, i);
-             int diferenca = montarPorao(lista, 0);
-                    if(diferenca < min){ //se custo atual for menor que o minimo global, continua
-                         permutar(lista, inicio + 1);
-                    }
+            // Heurística simples para poda (se a estimativa for ruim, não continua)
+            int diferencaEstimada = calcularDistribuicaoGulosa(lista);
+            if (diferencaEstimada < diferencaMinima) {
+                permutar(lista, inicio + 1);
+            }
             Collections.swap(lista, inicio, i);
         }
     }
-    
 
-    public int montarPorao(List<Peca> pecas, int index) {
-     int peso1 = 0;
-     int peso2 = 0;
-        for(int i =0; i < pecas.size(); i++) {
-            if( peso1 <= peso2){
-               peso1 += pecas.get(i).getPeso();
-               poraoAtual1.add(pecas.get(i));
+    private int calcularDistribuicaoGulosa(List<Peca> pecas) {
+        poraoAtual1.clear();
+        poraoAtual2.clear();
+        int peso1 = 0;
+        int peso2 = 0;
+
+        for (Peca p : pecas) {
+            if (peso1 <= peso2) {
+                peso1 += p.getPeso();
+                poraoAtual1.add(p);
             } else {
-               peso2 += pecas.get(i).getPeso();
-               poraoAtual2.add(pecas.get(i));
+                peso2 += p.getPeso();
+                poraoAtual2.add(p);
             }
         }
-        return Math.abs(peso1 - peso2);//retorna a diferença de peso
+        return Math.abs(peso1 - peso2);
+    }
+
+    public List<Peca> getMelhorPorao1() {
+        return melhorPorao1;
+    }
+
+    public List<Peca> getMelhorPorao2() {
+        return melhorPorao2;
+    }
+
+    public int getDiferencaMinima() {
+        return diferencaMinima;
     }
 }

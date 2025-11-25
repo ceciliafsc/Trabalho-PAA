@@ -1,4 +1,5 @@
 # Relatório Técnico - Trabalho de PAA
+# Relatório Técnico - Trabalho de PAA
 **Universidade:** PUC Minas  
 **Disciplina:** Projeto e Análise de Algoritmos  
 **Implementação:** Problema de Corte de Estoque e Particionamento de Conjunto
